@@ -11,16 +11,18 @@ app.secret_key = os.urandom(24)
 def checkIfUserExist(uId , uPwdHash):
     conn = sqlite3.connect('database')
     c = conn.cursor()
-    result = c.execute("SELECT * FROM users WHERE userId=(?)",[uId])
-    for i in result:
+    res = c.execute("SELECT * FROM users WHERE userId=(?)",[uId])
+    for i in res:
         if uPwdHash in i:
             return True , i[3]
-    return False
+    return False , 0
 
+#Main Login screen of NMS
 @app.route('/')
 def index():
     return render_template('index.html')
 
+#Dashboard of whole web app to navigate
 @app.route('/dashBoard')
 def dashBoard():
     if 'userId' not in session:
@@ -33,6 +35,7 @@ def dashBoard():
 
     return render_template('dashboard.html',userName = session['userId'] , userType =  session['uType'])
 
+#Login Event
 @app.route('/login' , methods=['POST'])
 def login():
     uId = request.form['uId']
@@ -46,6 +49,7 @@ def login():
     else:
         return redirect(url_for('index' , wrongCredentials = True))
 
+#Logout event
 @app.route('/logout')
 def logout():
     session.pop('userId' , None)
@@ -148,6 +152,7 @@ def changeUser():
     allUsers = userModule.fetchUserList()
     return render_template('changeUser.html',userList = allUsers)
 
+#update userType actiivty
 @app.route('/updateUser/<id>' , methods =['POST'])
 def updateUser(id):
     res = userModule.updateUser(request.form['newType'],id)
@@ -156,6 +161,18 @@ def updateUser(id):
     else:
         return render_template('users.html' , isUpdated = False)
 
+@app.route('/devices')
+def devices():
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard'))
+    return render_template('manageDevices.html')
 
 #Create database at __init__
 def createDB():
@@ -165,10 +182,15 @@ def createDB():
     c.execute('CREATE TABLE IF NOT EXISTS devices(ID INTEGER PRIMARY KEY AUTOINCREMENT , deviceIp TEXT NOT NULL UNIQUE , deviceName TEXT NOT NULL , deviceType TEXT NOT NULL)')
     conn.commit()
 
+#Error Handler if Page not found
 @app.errorhandler(404)
 def page_not_found(e):
     return 'page under Development right now.'
 
+#main Diver of program
 if __name__  == "__main__":
     createDB()
     app.run(debug = True)
+
+
+#756 LOC at 12:24am 25-06-2019
