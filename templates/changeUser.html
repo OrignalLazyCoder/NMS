@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+                
+        <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <a class="navbar-brand" href="#">NMS - IOCL</a>
+            </div>
+            <ul class="nav navbar-nav">
+            <li class="active"><a href="dashBoard">Home</a></li>
+            <li><a href="/devices">Manage Devices</a></li>
+            <li><a href="network">Manage Network</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            <li><a href="/users"><span class="glyphicon glyphicon-user"></span>Manage Users</a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+        </nav>
+
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">User name</th>
+                <th scope="col">User Type</th>
+                <th scope="col">New User Type</th>
+                <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in userList %}
+                <form action="/updateUser/{{ user.uId }}" method = "POST">
+                    <tr>
+                    <th scope="row">{{ user.uId }}</th>
+                    <td>{{ user.uName }}</td>
+                    <td>{{ user.uType }}</td>
+                    <td>
+                        <select name="newType">
+                            <option value="admin">Admin</option>
+                            <option value="viewer">viewer</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="submit">
+                    </td>
+                    </tr>
+                </form>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </body>
+</html>

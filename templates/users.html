@@ -1,0 +1,170 @@
+<html>
+    <head>
+        <title>Manage Users</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <style>
+
+            a{
+                color: #000;
+            }
+            a:hover{
+                color:red;
+            }
+            /* Create two equal columns that floats next to each other */
+            .column {
+            float: left;
+            width: 50%;
+            padding: 10px;
+            }
+
+            .column{
+                padding : 30px;
+            }
+
+            /* Clear floats after the columns */
+            .row:after {
+            content: "";
+            display: table;
+            clear: both;
+            }
+            /* Style the buttons */
+            .btn {
+            border: none;
+            outline: none;
+            padding: 12px 16px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            }
+
+            .btn:hover {
+            background-color: #ddd;
+            }
+
+            .btn.active {
+            background-color: #666;
+            color: white;
+            }
+            .menu{
+                background:#fff;
+            }
+        </style>
+        <script>
+            // Get the elements with class="column"
+                var elements = document.getElementsByClassName("column");
+
+                // Declare a loop variable
+                var i;
+
+                // List View
+                function listView() {
+                for (i = 0; i < elements.length; i++) {
+                    elements[i].style.width = "100%";
+                }
+                }
+
+                // Grid View
+                function gridView() {
+                for (i = 0; i < elements.length; i++) {
+                    elements[i].style.width = "50%";
+                }
+                }
+                var container = document.getElementById("btnContainer");
+                var btns = container.getElementsByClassName("btn");
+                for (var i = 0; i < btns.length; i++) {
+                btns[i].addEventListener("click", function() {
+                    var current = document.getElementsByClassName("active");
+                    current[0].className = current[0].className.replace(" active", "");
+                    this.className += " active";
+                });
+                }
+        </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <a class="navbar-brand" href="#">NMS - IOCL</a>
+            </div>
+            <ul class="nav navbar-nav">
+            <li class="active"><a href="dashBoard">Home</a></li>
+            <li><a href="/devices">Manage Devices</a></li>
+            <li><a href="network">Manage Network</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            <li><a href="/users"><span class="glyphicon glyphicon-user"></span>Manage Users</a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+        </nav>
+        {% if addedNew %}
+            <div class="alert alert-success fade in">
+            <strong>Success!</strong> Added new User
+            </div>
+        {% endif %}
+        {% if isDeleted %}
+            <div class="alert alert-success fade in">
+            <strong>Success!</strong> User Deleted
+            </div>
+        {% endif %}
+        {% if isUpdated %}
+            <div class="alert alert-success fade in">
+            <strong>Success!</strong> User Updated
+            </div>
+        {% endif %}
+        {% if addedNew== False %}
+            <div class="alert alert-danger fade in">
+            <strong>Success!</strong> Adding new User failed
+            </div>
+        {% endif %}
+        {% if isDeleted==False %}
+            <div class="alert alert-danger fade in">
+            <strong>Success!</strong> User not Deleted
+            </div>
+        {% endif %}
+        {% if isUpdated==False %}
+            <div class="alert alert-danger fade in">
+            <strong>Success!</strong> User not Updated
+            </div>
+        {% endif %}
+        <div class="jumbotron menu">
+            <div id="btnContainer">
+            <button class="btn" onclick="listView()"><i class="fa fa-bars"></i> List</button> 
+            <button class="btn" onclick="gridView()"><i class="fa fa-th-large"></i> Grid</button>
+            </div>
+            <div class="row">
+            <a href="/addUser">
+            <div class="column" style="background-color:#aaa;">
+                <h2>Add New User</h2>
+                <p>Add a new user to use Network monitoring system with specific user rights and controls</p>
+            </div>
+            </a>
+            <a href="/deleteUser">
+                <div class="column" style="background-color:#bbb;">
+                    <h2>Delete user</h2>
+                    <p>Delete a user and all his rights to use Network monitoring system. Note: You cannot recover user after deleting it.</p>
+                </div>
+            </a>
+            </div>
+
+            <div class="row">
+            <a href="/changeUser">
+                <div class="column" style="background-color:#ccc;">
+                    <h2>Change user permisions</h2>
+                    <p>Change access permisions for a specific user.</p>
+                </div>
+            </a>
+            <a href="/viewUsers">
+                <div class="column" style="background-color:#ddd;">
+                    <h2>View all Users</h2>
+                    <p>View all present users registered in network monitoring system</p>
+                </div>
+            </a>
+        </div>
+
+        </div>
+
+    </body>
+</html>
