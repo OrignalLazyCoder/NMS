@@ -3,6 +3,7 @@ import os
 import sqlite3
 import hashlib
 import userModule
+import devicesModule
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -152,7 +153,7 @@ def changeUser():
     allUsers = userModule.fetchUserList()
     return render_template('changeUser.html',userList = allUsers)
 
-#update userType actiivty
+#update userType activty
 @app.route('/updateUser/<id>' , methods =['POST'])
 def updateUser(id):
     res = userModule.updateUser(request.form['newType'],id)
@@ -174,12 +175,82 @@ def devices():
             return redirect(url_for('dashBoard'))
     return render_template('manageDevices.html')
 
+#Add New Device Interface
+@app.route('/addDevice')
+def addDevice():
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard'))
+    return render_template('addDevice.html')
+
+#Add new Device Interface
+@app.route('/addDeviceType')
+def addDeviceType():
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard'))
+    deviceTypeList = devicesModule.fetchDeviceTypeList()
+    return render_template('addDeviceType.html',deviceList = deviceTypeList)
+
+#Add new Device Activity
+@app.route('/addNewDeviceActivity',methods=['POST'])
+def addNewDeviceActivity():
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard'))
+    dType = request.form['dType']
+    print(dType)
+    res = devicesModule.addDeviceType(dType)
+    if res == True:
+        return redirect(url_for('addDeviceType',status="Added"))
+    else:
+        return redirect(url_for('addDeviceType',status="NotAdded"))
+
+#Delete Device Type Activity
+@app.route('/deleteDeviceType/<id>')
+def deleteDeviceType(id):
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard')) 
+    
+    res = devicesModule.deleteDeviceType(id)
+    if res == True:
+        return redirect(url_for('addDeviceType',status="deleted"))
+    else:
+        return redirect(url_for('addDeviceType',status="notDeleted"))        
+
+
 #Create database at __init__
 def createDB():
     conn = sqlite3.connect('database')
     c = conn.cursor()
     c.execute('CREATE TABLE IF NOT EXISTS users(ID INTEGER PRIMARY KEY AUTOINCREMENT , userId TEXT NOT NULL UNIQUE , userPass TEXT NOT NULL , userAuth TEXT NOT NULL)')
     c.execute('CREATE TABLE IF NOT EXISTS devices(ID INTEGER PRIMARY KEY AUTOINCREMENT , deviceIp TEXT NOT NULL UNIQUE , deviceName TEXT NOT NULL , deviceType TEXT NOT NULL)')
+    c.execute('CREATE TABLE IF NOT EXISTS deviceType(ID INTEGER PRIMARY KEY AUTOINCREMENT , deviceTypeName TEXT NOT NULL UNIQUE)')
     conn.commit()
 
 #Error Handler if Page not found
