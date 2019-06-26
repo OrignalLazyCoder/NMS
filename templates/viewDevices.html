@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>View device</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+           <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <a class="navbar-brand" href="#">NMS - IOCL</a>
+            </div>
+            <ul class="nav navbar-nav">
+            <li><a href="/dashBoard">Home</a></li>
+            <li class="active"><a href="/devices">Manage Devices</a></li>
+            <li><a href="/network">Manage Network</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            <li><a href="/users" ><span class="glyphicon glyphicon-user"></span>Manage Users</a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+        </nav>
+
+        <h3>All Network device list</h3>
+
+        <table class="table table-dark">
+            <tr>
+                <th >#</th>
+                <th>Device IP</th>
+                <th>Device Name</th>
+                <th>Device Type</th>
+                <th>Device Parent</th>
+                <th colspan="2">Action</th>
+            </tr>
+            {% for d in device %}
+                <tr>
+                    <td>{{d.id}}</td>
+                    <td>{{ d.ip }}</td>
+                    <td>{{ d.name }}</td>
+                    <td>{{ d.type }}</td>
+                    <td>{{ d.parent }}</td>
+                    <td><a href="/deleteNetworkDevice/{{ d.id }}">Delete</a></td>
+                    <td><a onclick="alert('Will be added soon')">Edit</a><td>
+                <tr>
+            {% endfor %}
+        </table>
+
+    </body>
+</html>

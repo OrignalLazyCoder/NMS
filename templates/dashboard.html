@@ -4,8 +4,40 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+            var intervalID = setInterval(update_values , 10000);
+
+            function update_values() {
+                $.getJSON($SCRIPT_ROOT + '/_stuff',
+                    
+            function(data) {
+                $("#tdata").text("");
+                console.log((data));
+                var data = JSON.parse(JSON.stringify(data));
+                console.log(data)
+                data.forEach(function(dt){
+                    $("#tdata").append("<tr>"+
+                        "<th scope='row'>"+dt.id+"</th>"+
+                        "<td>"+dt.ip+"</td>"+
+                        "<td>"+dt.name+"</td>"+
+                        "<td>"+dt.type+"</td>"+
+                        "<td>"+dt.parent+"</td>"+
+                        "<td> <font color="+dt.color+">"+dt.status+"</font></td>"+
+                        
+                        "</tr>");
+                });
+
+            });
+            
+            };
+
+        </script>
     </head>
-    <body>
+    <body  onload="update_values();">
                 
         <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -14,8 +46,10 @@
             </div>
             <ul class="nav navbar-nav">
             <li class="active"><a href="dashBoard">Home</a></li>
+            {% if userType == "admin" %}
             <li><a href="/devices">Manage Devices</a></li>
             <li><a href="network">Manage Network</a></li>
+            {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
             {% if userType == "admin" %}
@@ -25,6 +59,19 @@
             </ul>
         </div>
         </nav>
-            Welcome {{ userName }}
+    <table class="table table-inverse">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Device IP</th>
+                <th scope="col">Device Name</th>
+                <th scope="col">Device Type</th>
+                <th scope="col">Device Parent</th>
+                <th scope="col">Device Status</th>
+            </tr>
+        </thead>
+        <tbody id="tdata">
+        </tbody>
+    </table>
     </body>
 </html>

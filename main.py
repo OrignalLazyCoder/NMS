@@ -1,5 +1,6 @@
-from flask import Flask, session, redirect, url_for, render_template, request
+from flask import Flask, session, redirect, url_for, render_template, request, json
 import os
+import time
 import sqlite3
 import hashlib
 import userModule
@@ -8,6 +9,15 @@ import devicesModule
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+@app.route('/_stuff' , methods = ['GET'])
+def stuff():
+    data = devicesModule.checkOnline()
+    result = app.response_class(
+        response=json.dumps(data),
+        status=200,
+        mimetype='application/json'
+    )
+    return result
 
 def checkIfUserExist(uId , uPwdHash):
     conn = sqlite3.connect('database')
@@ -187,7 +197,8 @@ def addDevice():
         return redirect(url_for('index' , isUser = False))
     if session['uType'] != "admin":
             return redirect(url_for('dashBoard'))
-    return render_template('addDevice.html')
+    deviceTypeList = devicesModule.fetchDeviceTypeList()
+    return render_template('addDevice.html' , dTypeList = deviceTypeList)
 
 #Add new Device Interface
 @app.route('/addDeviceType')
@@ -241,15 +252,66 @@ def deleteDeviceType(id):
     if res == True:
         return redirect(url_for('addDeviceType',status="deleted"))
     else:
-        return redirect(url_for('addDeviceType',status="notDeleted"))        
+        return redirect(url_for('addDeviceType',status="notDeleted"))    
 
+#Add new network device activity
+@app.route('/addNewNetworkDeviceActivity' , methods= ['POST'])
+def addNewNetworkDeviceActivity():
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard'))
+    
+    dIp = request.form['dIp']
+    dType = request.form['dType']
+    dName = request.form['dName']
+    dParent = request.form['dParent']
+    res = devicesModule.addDevice(dIp,dName,dType,dParent)
+    return redirect(url_for('addDevice',deviceAdded=str(res)))
+
+#View all network device List
+@app.route('/viewDevices')
+def viewDevices():
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard'))
+    deviceList = devicesModule.fetchDeviceList()
+    return render_template('viewDevices.html',device = deviceList)
+
+#Delete network device from network device list
+@app.route('/deleteNetworkDevice/<id>')
+def deleteNetworkDevice(id):
+    if 'userId' not in session:
+        return redirect(url_for('index' , isUser = False))
+    try:
+        if session['userId'] == None:
+            return redirect(url_for('index' , isUser = False))
+    except:
+        return redirect(url_for('index' , isUser = False))
+    if session['uType'] != "admin":
+            return redirect(url_for('dashBoard'))
+    
+    res = devicesModule.deleteDevice(id)
+
+    return redirect(url_for('viewDevices',deleted=str(res)))
 
 #Create database at __init__
 def createDB():
     conn = sqlite3.connect('database')
     c = conn.cursor()
     c.execute('CREATE TABLE IF NOT EXISTS users(ID INTEGER PRIMARY KEY AUTOINCREMENT , userId TEXT NOT NULL UNIQUE , userPass TEXT NOT NULL , userAuth TEXT NOT NULL)')
-    c.execute('CREATE TABLE IF NOT EXISTS devices(ID INTEGER PRIMARY KEY AUTOINCREMENT , deviceIp TEXT NOT NULL UNIQUE , deviceName TEXT NOT NULL , deviceType TEXT NOT NULL)')
+    c.execute('CREATE TABLE IF NOT EXISTS deviceList(ID INTEGER PRIMARY KEY AUTOINCREMENT , deviceIp TEXT NOT NULL UNIQUE , deviceName TEXT NOT NULL , deviceType TEXT NOT NULL,parent TEXT NOT NULL)')
     c.execute('CREATE TABLE IF NOT EXISTS deviceType(ID INTEGER PRIMARY KEY AUTOINCREMENT , deviceTypeName TEXT NOT NULL UNIQUE)')
     conn.commit()
 
