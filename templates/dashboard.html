@@ -1,12 +1,12 @@
 <html>
     <head>
         <title>Dashboard</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/css/bootstrap.min.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/bootstrap.min1.js"></script>
+        <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+        <link rel="stylesheet" href="/static/css/bootstrap.min1.css">        
+        <script src="/static/js/jquery.min1.js"></script>
         <script type="text/javascript">
             var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
             var intervalID = setInterval(update_values , 10000);
@@ -28,10 +28,10 @@
                         "<td>"+dt.parent+"</td>"+
                         "<td><font color="+dt.color+">"+dt.status+"</font></a></td>"+
                         "</tr>");
-                });
+                    });
 
-            });
-            
+                });
+                
             };
 
         </script>

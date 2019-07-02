@@ -324,6 +324,3 @@ def page_not_found(e):
 if __name__  == "__main__":
     createDB()
     app.run(debug = True)
-
-
-#756 LOC at 12:24am 25-06-2019
